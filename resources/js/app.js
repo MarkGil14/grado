@@ -1,30 +1,18 @@
- 
 require('./bootstrap');
-
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Vuex from 'vuex';
-import {routes} from './routes';
-import StoreData from './store';
-import MainApp from './components/MainApp.vue';
-import {initialize} from './helpers/general';
-
 Vue.use(VueRouter);
-Vue.use(Vuex);
-const store = new Vuex.Store(StoreData);
+
+let routes = [
+    { path : '/dashboard', component : require('./components/Dashboard.vue') },
+    { path : '/profile', component : require('./components/Profile.vue') },
+]
 
 const router = new VueRouter({
-    routes, 
-    mode : 'history'
+    routes
 });
-
-initialize(store, router);
 
 const app = new Vue({
     el: '#app',
-    // router,
-    // store,
-    // components : {
-    //     MainApp
-    // }
+    router 
 });
