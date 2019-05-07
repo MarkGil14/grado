@@ -31,16 +31,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </ul>
 
     <!-- SEARCH FORM -->
-    <form class="form-inline ml-3">
       <div class="input-group input-group-sm">
-        <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+        <input class="form-control form-control-navbar" @keyup="searchit" v-model="search" type="search" placeholder="Search" aria-label="Search">
         <div class="input-group-append">
-          <button class="btn btn-navbar" type="submit">
+          <button class="btn btn-navbar" @click="searchit">
             <i class="fa fa-search"></i>
           </button>
         </div>
       </div>
-    </form>
 
   </nav>
   <!-- /.navbar -->
@@ -59,10 +57,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-        <img src="{{ asset('logo/1553185792default.png') }}" class="img-circle elevation-2" alt="User Image">
+        <img src="{{ asset(Auth::user()->photo) }}" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-        <a href="#" class="d-block">{{ Auth::user()->name }}</a>
+        <a href="#" class="d-block">
+          {{ Auth::user()->name }}
+          <p>{{ Auth::user()->type }}</p>
+        </a>
         </div>
       </div>
 
@@ -81,9 +82,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </router-link>
               </li>
           
-  
+        @can('isAdmin')
+
           <li class="nav-item has-treeview">
-            <a href="#" class="nav-link active">
+            <a href="#" class="nav-link">
               <i class="nav-icon fa fa-gear"></i>
               <p>
                 Management
@@ -92,10 +94,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="fa fa-circle-o nav-icon"></i>
-                  <p>Active Page</p>
-                </a>
+                <router-link to="/users" class="nav-link">
+                  <i class="fa fa-users nav-icon"></i>
+                  <p>Users</p>
+                </router-link>
               </li>
               <li class="nav-item">
                 <a href="#" class="nav-link">
@@ -105,6 +107,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </li>
             </ul>
 
+          @endcan
               <li class="nav-item">
                   <router-link to="/profile" class="nav-link">
                     <i class="nav-icon  fa fa-user-alt"></i>
@@ -114,13 +117,31 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </router-link>
                 </li>
 
+                @can('isAdmin')
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                  <router-link to="/developer" class="nav-link">
+                    <i class="nav-icon  fa fa-code"></i>
+                    <p>
+                      Developer
+                    </p>
+                  </router-link>
+                </li>                
+                @endcan
+
+                <li class="nav-item">
+                
+                    <a class="nav-link" href="{{ route('logout') }}"
+                    onclick="event.preventDefault();
+                                  document.getElementById('logout-form').submit();">
                       <i class="nav-icon  fa fa-power-off"></i>
                       <p>
-                        Logout
+                        {{ __('Logout') }}
                       </p>
-                    </a>
+                  </a>
+
+                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                     @csrf
+                 </form>                    
                   </li>
   
 
@@ -141,7 +162,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <div class="container-fluid">
         
         <div class="row">
-          <router-view></router-view>
+          <router-view>
+          </router-view>
+          <vue-progress-bar></vue-progress-bar>
+
         </div>
         <!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -164,6 +188,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 <!-- REQUIRED SCRIPTS -->
 
+@auth
+<script>
+  window.user = @json(auth()->user())
+</script>
+
+@endauth
 
 <script src="{{ asset('js/app.js') }}"></script>
 
